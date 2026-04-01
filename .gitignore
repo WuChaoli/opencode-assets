@@ -1,0 +1,11 @@
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore backups
+*.bak
+*~
+
+# Ignore OS files
+.DS_Store
+Thumbs.db

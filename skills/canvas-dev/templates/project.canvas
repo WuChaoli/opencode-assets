@@ -1,0 +1,194 @@
+{
+  "nodes": [
+    {
+      "id": "note-title",
+      "type": "text",
+      "x": 0,
+      "y": -200,
+      "width": 400,
+      "height": 80,
+      "text": "# 项目架构白板\n\n生成时间：{DATE}\n粒度级别：{GRANULARITY}",
+      "color": "6"
+    },
+    {
+      "id": "group-presentation",
+      "type": "group",
+      "x": -50,
+      "y": 0,
+      "width": 350,
+      "height": 300,
+      "label": "表现层 (Presentation)"
+    },
+    {
+      "id": "node-frontend",
+      "type": "text",
+      "x": 0,
+      "y": 50,
+      "width": 250,
+      "height": 100,
+      "text": "**{Frontend}**\n`{path}`\n\n**职责**: 用户界面\n**复杂度**: {complexity}",
+      "color": "3"
+    },
+    {
+      "id": "group-application",
+      "type": "group",
+      "x": 400,
+      "y": 0,
+      "width": 350,
+      "height": 450,
+      "label": "应用层 (Application)"
+    },
+    {
+      "id": "node-api",
+      "type": "text",
+      "x": 450,
+      "y": 50,
+      "width": 250,
+      "height": 100,
+      "text": "**{API Gateway}**\n`{path}`\n\n**职责**: 路由、认证\n**复杂度**: {complexity}",
+      "color": "3"
+    },
+    {
+      "id": "node-service-1",
+      "type": "text",
+      "x": 450,
+      "y": 170,
+      "width": 250,
+      "height": 100,
+      "text": "**{Service A}**\n`{path}`\n\n**职责**: {description}\n**复杂度**: {complexity}"
+    },
+    {
+      "id": "node-service-2",
+      "type": "text",
+      "x": 450,
+      "y": 290,
+      "width": 250,
+      "height": 100,
+      "text": "**{Service B}**\n`{path}`\n\n**职责**: {description}\n**复杂度**: {complexity}"
+    },
+    {
+      "id": "group-infrastructure",
+      "type": "group",
+      "x": 850,
+      "y": 0,
+      "width": 300,
+      "height": 450,
+      "label": "基础设施层 (Infrastructure)"
+    },
+    {
+      "id": "node-database",
+      "type": "text",
+      "x": 900,
+      "y": 50,
+      "width": 200,
+      "height": 100,
+      "text": "**{Database}**\n`{connection}`\n\n**类型**: {type}\n**表数量**: {count}",
+      "color": "4"
+    },
+    {
+      "id": "node-cache",
+      "type": "text",
+      "x": 900,
+      "y": 170,
+      "width": 200,
+      "height": 100,
+      "text": "**{Cache}**\n`{connection}`\n\n**用途**: {usage}",
+      "color": "1"
+    },
+    {
+      "id": "node-mq",
+      "type": "text",
+      "x": 900,
+      "y": 290,
+      "width": 200,
+      "height": 100,
+      "text": "**{Message Queue}**\n`{connection}`\n\n**Topics**: {topics}",
+      "color": "2"
+    },
+    {
+      "id": "note-insights",
+      "type": "text",
+      "x": 0,
+      "y": 500,
+      "width": 500,
+      "height": 150,
+      "text": "## 📊 洞察摘要\n\n**架构模式**: {pattern}\n**核心组件**: {count} 个\n**关键路径**: {critical_path}\n**潜在风险**: {risks}",
+      "color": "6"
+    },
+    {
+      "id": "note-legend",
+      "type": "text",
+      "x": 550,
+      "y": 500,
+      "width": 300,
+      "height": 150,
+      "text": "## 🎨 颜色图例\n\n🔴 缓存/热点/警告\n🟠 消息队列/异步\n🟡 入口/网关\n🟢 数据库/持久化\n🔵 外部服务\n🟣 注释/说明",
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-frontend-api",
+      "fromNode": "node-frontend",
+      "toNode": "node-api",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "HTTP"
+    },
+    {
+      "id": "e-api-service1",
+      "fromNode": "node-api",
+      "toNode": "node-service-1",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "调用"
+    },
+    {
+      "id": "e-api-service2",
+      "fromNode": "node-api",
+      "toNode": "node-service-2",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "调用"
+    },
+    {
+      "id": "e-service1-db",
+      "fromNode": "node-service-1",
+      "toNode": "node-database",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "读写"
+    },
+    {
+      "id": "e-service2-db",
+      "fromNode": "node-service-2",
+      "toNode": "node-database",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "读写"
+    },
+    {
+      "id": "e-service1-cache",
+      "fromNode": "node-service-1",
+      "toNode": "node-cache",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "缓存"
+    },
+    {
+      "id": "e-service2-mq",
+      "fromNode": "node-service-2",
+      "toNode": "node-mq",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "发布"
+    }
+  ]
+}

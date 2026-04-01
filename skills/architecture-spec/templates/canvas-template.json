@@ -1,0 +1,183 @@
+{
+  "nodes": [
+    {
+      "id": "group-frontend",
+      "type": "group",
+      "x": -50,
+      "y": -50,
+      "width": 350,
+      "height": 300,
+      "label": "前端层"
+    },
+    {
+      "id": "frontend-app",
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 250,
+      "height": 100,
+      "text": "**Web App**\n`src/frontend/`\n\n**职责**: 用户界面\n**复杂度**: Medium",
+      "color": "3"
+    },
+    {
+      "id": "frontend-state",
+      "type": "text",
+      "x": 0,
+      "y": 120,
+      "width": 250,
+      "height": 80,
+      "text": "**State Store**\n`src/store/`\n\n**职责**: 状态管理"
+    },
+    {
+      "id": "group-backend",
+      "type": "group",
+      "x": 400,
+      "y": -50,
+      "width": 350,
+      "height": 450,
+      "label": "后端服务层"
+    },
+    {
+      "id": "api-gateway",
+      "type": "text",
+      "x": 450,
+      "y": 0,
+      "width": 250,
+      "height": 100,
+      "text": "**API Gateway**\n`src/api/main.py`\n\n**职责**: 路由分发、认证\n**复杂度**: Medium",
+      "color": "3"
+    },
+    {
+      "id": "user-service",
+      "type": "text",
+      "x": 450,
+      "y": 120,
+      "width": 250,
+      "height": 100,
+      "text": "**UserService**\n`src/services/user.py`\n\n**职责**: 用户管理\n**复杂度**: Low"
+    },
+    {
+      "id": "order-service",
+      "type": "text",
+      "x": 450,
+      "y": 240,
+      "width": 250,
+      "height": 100,
+      "text": "**OrderService**\n`src/services/order.py`\n\n**职责**: 订单处理\n**复杂度**: High"
+    },
+    {
+      "id": "group-data",
+      "type": "group",
+      "x": 850,
+      "y": -50,
+      "width": 300,
+      "height": 450,
+      "label": "数据层"
+    },
+    {
+      "id": "database",
+      "type": "text",
+      "x": 900,
+      "y": 0,
+      "width": 200,
+      "height": 100,
+      "text": "**PostgreSQL**\n`主数据库`\n\n**类型**: RDBMS\n**表数量**: 20+",
+      "color": "4"
+    },
+    {
+      "id": "cache",
+      "type": "text",
+      "x": 900,
+      "y": 120,
+      "width": 200,
+      "height": 100,
+      "text": "**Redis**\n`缓存层`\n\n**用途**: Session/热数据\n**⚠️ 注意**: 内存限制",
+      "color": "1"
+    },
+    {
+      "id": "message-queue",
+      "type": "text",
+      "x": 900,
+      "y": 240,
+      "width": 200,
+      "height": 100,
+      "text": "**Kafka**\n`消息队列`\n\n**用途**: 异步事件\n**Topic**: orders, notifications",
+      "color": "2"
+    },
+    {
+      "id": "note-architecture",
+      "type": "text",
+      "x": 0,
+      "y": 450,
+      "width": 400,
+      "height": 100,
+      "text": "**📝 架构说明**\n\n采用三层架构，前后端分离。\n数据库使用 PostgreSQL，缓存使用 Redis。\n异步任务通过 Kafka 消息队列处理。",
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-frontend-api",
+      "fromNode": "frontend-app",
+      "toNode": "api-gateway",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "HTTP/REST"
+    },
+    {
+      "id": "e-api-user",
+      "fromNode": "api-gateway",
+      "toNode": "user-service",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "调用"
+    },
+    {
+      "id": "e-api-order",
+      "fromNode": "api-gateway",
+      "toNode": "order-service",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "toEnd": "arrow",
+      "label": "调用"
+    },
+    {
+      "id": "e-user-db",
+      "fromNode": "user-service",
+      "toNode": "database",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "读写"
+    },
+    {
+      "id": "e-order-db",
+      "fromNode": "order-service",
+      "toNode": "database",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "读写"
+    },
+    {
+      "id": "e-user-cache",
+      "fromNode": "user-service",
+      "toNode": "cache",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "缓存"
+    },
+    {
+      "id": "e-order-mq",
+      "fromNode": "order-service",
+      "toNode": "message-queue",
+      "fromSide": "right",
+      "toSide": "left",
+      "toEnd": "arrow",
+      "label": "发布事件"
+    }
+  ]
+}
