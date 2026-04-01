@@ -1,3 +1,10 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# Lock files and temp files
+.lock-*.tmp
+
 # Ignore IDE files
 .vscode/
 .idea/

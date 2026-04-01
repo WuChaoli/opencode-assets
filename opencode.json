@@ -1,0 +1,159 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "small_model": "opencode/gpt-5-nano",
+  "agent": {
+    "plan": {
+      "mode": "primary",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "write": "deny"
+      }
+    }
+  },
+  "instructions": [
+    "AGENTS.md",
+    "instructions/INSTRUCTIONS.md",
+    "skills/eval-harness/SKILL.md"
+  ],
+  "mcp": {
+    "chrome-devtools": {
+      "command": [
+        "npx",
+        "-y",
+        "chrome-devtools-mcp",
+        "--headless"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "context7": {
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "github": {
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "playwright": {
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
+    "postgres": {
+      "command": [
+        "sh",
+        "-lc",
+        "npx -y @modelcontextprotocol/server-postgres \"$POSTGRES_URL\""
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "serena": {
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server"
+      ],
+      "enabled": true,
+      "type": "local"
+    }
+  },
+  "permission": {
+    "external_directory": {
+      "~/.config/opencode/get-shit-done/*": "allow"
+    },
+    "read": {
+      "~/.config/opencode/get-shit-done/*": "allow"
+    },
+    "mcp_*": "ask"
+  },
+  "plugin": [
+    "./plugins"
+  ],
+  "skills": {
+    "paths": [
+      "~/.claude/homunculus/evolved/skills",
+      "~/.claude/homunculus/evolved/commands",
+      "~/.claude/homunculus/evolved/agents"
+    ]
+  },
+  "provider": {
+    "tabcode": {
+      "models": {
+        "gpt-5.3-codex": {
+          "name": "gpt-5.3-codex",
+          "family": "gpt-codex",
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "limit": {
+            "context": 512000,
+            "input": 512000,
+            "output": 128000
+          },
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "options": {
+            "reasoningEffort": "high",
+            "textVerbosity": "low"
+          }
+        },
+        "gpt-5.4": {
+          "name": "gpt-5.4",
+          "family": "gpt",
+          "tool_call": true,
+          "reasoning": true,
+          "attachment": true,
+          "limit": {
+            "context": 1000000,
+            "input": 1000000,
+            "output": 128000
+          },
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          },
+          "options": {
+            "reasoningEffort": "medium",
+            "textVerbosity": "low"
+          }
+        }
+      },
+      "npm": "@ai-sdk/openai",
+      "options": {
+        "apiKey": "sk-user-67f28162df616ddce8d77e89",
+        "baseURL": "https://api2.tabcode.cc/openai/v1",
+        "timeout": 300000
+      }
+    }
+  }
+}
