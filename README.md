@@ -19,3 +19,15 @@
 | glue-coding | 胶水编程模式 |
 | architecture-spec | 架构可视化交互规范 |
 | canvas-dev | Canvas 白板驱动开发 |
+| docx | Word 文档处理 |
+| pdf | PDF 处理 |
+| pptx | PPT 演示文稿处理 |
+| xlsx | Excel 电子表格处理 |
+| figma | Figma 设计集成 |
+| figma-implement-design | Figma 设计实现 |
+| playwright | Playwright 浏览器自动化 |
+| playwright-interactive | Playwright 交互式测试 |
+| screenshot | 截图工具 |
+| gh-address-comments | GitHub 评论处理 |
+| rokid-glass3-sdk | Rokid Glass 3 SDK |
+| codex-review | 代码审查 |
