@@ -4,6 +4,7 @@
 
 | 文档 | 说明 |
 |:---|:---|
+| [quick-reference.md](./quick-reference.md) | Quick Reference（决策树/模板/权限表/搜索策略） |
 | [agent-spec.md](./agent-spec.md) | Agent 规范详解（MUST/SHOULD/NEVER） |
 | [quality-checklist.md](./quality-checklist.md) | 质量门禁检查清单 |
 | [common-patterns.md](./common-patterns.md) | 常见模式与反模式 |

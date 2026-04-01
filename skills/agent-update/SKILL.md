@@ -27,27 +27,43 @@ description: "元技能：迭代优化现有 OpenCode Agent。触发条件：优
 必要输入（缺失时需询问）：
 1. 要优化的 Agent 路径或名称
 2. 具体问题或改进目标
+3. 当前模型是否满足需求
+4. 技术栈/框架是否有变化
 
 ## 工作流程（7 步，严格按顺序执行）
 
 ### 阶段一：诊断分析
 
-**Step 1: 读取并分析当前 Agent**
-- 读取 agent.md 文件内容
-- 运行审计脚本统计行数、结构完整性
-- 识别以下问题：
-  - 权限配置（过度/不足）
-  - Prompt 质量（角色模糊、职责不聚焦）
-  - 资源推荐过时（Skills/MCP/Tools）
-  - 触发词模糊（description）
-  - 模型选择不匹配
-  - 参数不合理（temperature/steps）
+**Step 1: 深度诊断分析**
+- 当前 Agent 在什么场景下表现不佳？
+- 期望的改进方向是什么？
+- 当前配置的模型是否满足需求？是否需要调整？
+- Agent 的目标技术栈/框架是否有变化？
+- 用 3-5 个问题澄清模糊点，确保充分理解优化目标
+
+**Step 1.5: 模型评估与优化建议**
+- 评估当前 model 配置是否匹配 Agent 类型（格式: `opencode/<model-id>`）：
+  - 开发型：推荐 `opencode/claude-sonnet-4-6`
+  - 分析型：推荐 `opencode/gpt-5.4`
+  - 创意型：推荐高 temperature 模型
+- 如不匹配，提出调整建议
+- 如用户不确定，使用 `model-guide` skill 协助
 
 **Step 2: 收集反馈和问题**
 - 询问用户具体问题：
   - 什么场景下不好用？
   - 期望的改进方向？
 - 如果没有具体反馈，基于诊断结果提出改进建议
+
+**Step 2.5: 分析 Agent 的 Skill 依赖**
+- 检查 Agent 中 Available Resources 列出的 Skills：
+  - 确认列出的 Skills 是否仍然存在于本地
+  - 确认 Skills 是否过时或需要更新
+- 基于优化后的 Agent 职责，分析是否需要新增 Skills：
+  - 如需要新 Skill，调用 `skill-creator` 工作流搜索/创建
+  - 如已有 Skill 需要更新，调用 `skill-update` 工作流
+- 向用户展示 Skill 依赖变更清单，确认更新方案
+- 如无需变更 Skill 依赖，可跳过此步
 
 ### 阶段二：方案设计
 
@@ -57,9 +73,14 @@ description: "元技能：迭代优化现有 OpenCode Agent。触发条件：优
   - Prompt：重写 Role/Responsibilities/Constraints
   - 资源：更新 Available Resources
   - 触发：优化 description
-  - 模型：调整 model 字段
+  - 模型：评估并调整 model 字段（如需要）
   - 参数：调整 temperature/steps
-- 输出修改预览（diff 形式）
+- **权限配置（必须用户确认）**：
+  - 展示当前权限配置 vs 建议的新配置
+  - 说明每个权限变更的原因
+  - 等待用户确认或修改权限配置
+  - **未经用户确认，不得确定权限配置**
+- 输出修改预览（diff 形式，包含已确认的权限配置）
 
 **Step 4: 与用户确认方案**
 - 展示修改预览
@@ -86,45 +107,55 @@ description: "元技能：迭代优化现有 OpenCode Agent。触发条件：优
 
 ## Quick Reference
 
-### 诊断检查清单
+详见 `references/diagnostic-guide.md` 和 `references/permission-guide.md`。
 
-| 检查项 | 标准 | 修复方式 |
-|--------|------|---------|
-| description | 包含具体触发词 | 添加关键词 |
-| mode | 已指定 | 设为 primary/subagent |
-| Role | 存在且清晰 | 重写角色定义 |
-| Responsibilities | 存在且 <= 5 条 | 精简职责 |
-| Available Resources | 存在且 <= 5 项 | 聚焦相关资源 |
-| Constraints | 存在且具体 | 补充约束 |
-| 权限配置 | 最小化 | 调整 tools/permission |
-| Prompt 行数 | < 100 行 | 精简内容 |
+核心规则：
+- Subagent 的 `permission` 只能使用 `allow/deny`，禁止使用 `ask`
+- 权限配置必须用户确认
+- 必须分析并更新 Skill 依赖
+- 每次只改 1-2 个变量，方便归因
 
-### 优化策略
+## Examples
 
-| 问题 | 策略 | 示例 |
-|------|------|------|
-| 权限过度 | 调整为最小权限 | edit: deny |
-| 权限不足 | 添加必要权限 | bash: ask |
-| Prompt 模糊 | 重写角色+职责 | 具体化行为描述 |
-| 资源过时 | 更新 Skills/MCP | 替换废弃引用 |
-| 触发不可靠 | 优化 description | 添加具体场景 |
-| 模型不匹配 | 调整 model | sonnet → opus |
+### Example 1: 优化触发不可靠的 Agent
 
-### tools vs permission 关系
+用户: 我的代码审查 agent 有时触发有时不触发
+→ Step 1: 诊断（什么场景下不触发？期望的触发词是什么？）
+→ Step 1.5: 评估模型配置 → 当前配置合理
+→ Step 2: 收集反馈 → description 太模糊，缺少具体触发词
+→ Step 2.5: 检查 Skill 依赖 → `architecture-spec` 仍存在，无需更新
+→ Step 3: 制定方案
+  - 优化 description：添加具体触发词（"PR 审查"、"代码质量检查"）
+  - 权限配置确认：保持 edit=deny, bash=deny → 用户确认
+→ Step 4: 用户确认方案
+→ Step 5-7: 执行修改 → 验证 → 交付
 
-| 组合 | 效果 |
-|------|------|
-| `tools: false` | 工具完全不可见 |
-| `tools: true` + `permission: deny` | 工具可见但被拒绝 |
-| `tools: true` + `permission: ask` | 工具可见但需确认 |
-| `tools: true` + `permission: allow` | 工具可见且自动执行 |
+### Example 2: 调整 Agent 权限并添加新 Skill
 
-### 创作规则（不可协商）
-1. 先诊断再修改，不要盲目修改
-2. 必须用户确认后再修改
-3. 保持向后兼容，不破坏现有触发
-4. 每次只改 1-2 个变量，方便归因
-5. 更新 Maintenance 章节记录变更
+用户: 我的分析 agent 需要访问数据库，还要生成 Excel 报告
+→ Step 1: 诊断（需要哪些数据库权限？报告格式是什么？）
+→ Step 1.5: 评估模型 → 推荐 opencode/gpt-5.4（分析型）
+→ Step 2: 收集反馈 → 需要数据库访问 + Excel 生成能力
+→ Step 2.5: 分析 Skill 依赖
+  - 检查现有 Skills：缺少 `xlsx` → 调用 `skill-creator` 搜索 → 找到官方实现 → 安装
+  - 依赖清单：`xlsx`（新安装）→ 用户确认
+→ Step 3: 制定方案
+  - 权限变更：bash: deny → allow（数据库查询需要）
+  - 新增 Available Resources：`xlsx` skill
+  - 权限配置确认 → 用户确认
+→ Step 4-7: 确认 → 执行 → 验证 → 交付
+
+### Example 3: Subagent 权限优化（移除 ask）
+
+用户: 我的 subagent 总是卡住等待确认
+→ Step 1: 诊断（什么操作卡住了？频率如何？）
+→ Step 2: 收集反馈 → permission 中使用了 ask，subagent 后台执行时阻塞
+→ Step 2.5: 检查 Skill 依赖 → 全部存在，无需更新
+→ Step 3: 制定方案
+  - 权限变更：edit: ask → allow（subagent 不能用 ask）
+  - 权限变更：bash: ask → deny（不需要 bash 操作）
+  - 说明变更原因 → 用户确认
+→ Step 4-7: 确认 → 执行 → 验证 → 交付
 
 ## 审计工具
 
@@ -143,4 +174,10 @@ description: "元技能：迭代优化现有 OpenCode Agent。触发条件：优
 ## Maintenance
 
 - Last updated: 2026-04-01
+- Changes:
+  - 新增 Step 2.5：Skill 依赖分析与更新流程
+  - 修改 Step 3：权限配置必须用户确认
+  - 新增 Subagent permission 规范：只能使用 allow/deny
+  - 新增 Examples 章节（3 个示例）
+  - 更新创作规则：新增规则 6-8
 - Known limits: 需要用户反馈才能精准优化；自动诊断只能发现结构问题

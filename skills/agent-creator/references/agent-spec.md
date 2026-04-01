@@ -28,41 +28,14 @@ mode: primary|subagent|all
 - `subagent` — 子代理，@ 调用或自动触发
 - `all` — 两种模式都支持（默认值）
 
-### 3.1 tools 字段（上游：控制工具是否可用）
+### 3. tools / permission 字段
 
-`tools` 控制 agent 可以使用哪些工具，是 boolean 开关。
+详见 `references/quick-reference.md` 中的 "tools vs permission 详解"。
 
-```yaml
-tools:
-  write: false    # 不可创建文件
-  edit: false     # 不可修改文件
-  bash: false     # 不可执行命令
-```
-
-- `false` → 工具完全不可见（模型不知道有这个工具）
-- `true` 或不写 → 工具可见
-
-### 3.2 permission 字段（下游：精细化控制）
-
-`permission` 控制工具如何执行，是 ask/allow/deny。
-
-```yaml
-permission:
-  edit: ask       # 需要确认
-  bash: deny      # 禁止执行
-  webfetch: allow # 自动允许
-```
-
-### tools vs permission 关系
-
-| 组合 | 效果 |
-|------|------|
-| `tools: false` | 工具完全不可见 |
-| `tools: true` + `permission: deny` | 工具可见但被拒绝 |
-| `tools: true` + `permission: ask` | 工具可见但需确认 |
-| `tools: true` + `permission: allow` | 工具可见且自动执行 |
-
-**推荐**：简单场景只用 `permission`；严格场景 `tools` + `permission` 组合。
+核心原则：
+- `tools`（上游）：控制工具是否可用（boolean 开关）
+- `permission`（下游）：控制工具如何执行（ask/allow/deny）
+- 简单场景只用 `permission`；严格场景两者组合使用
 
 ### 4. 必须包含的章节
 
