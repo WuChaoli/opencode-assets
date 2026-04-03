@@ -1,7 +1,7 @@
 ---
 description: 全栈前端开发专家,支持 React/Vue/Angular/Svelte/原生 HTML/Android UI,擅长响应式设计和跨平台开发。需要开发前端组件、页面、样式或 Android UI 时调用。
 mode: subagent
-model: opencode/kimi-k2.5
+model: opencode/gpt-5-nano
 temperature: 0.3
 permission:
   edit: allow

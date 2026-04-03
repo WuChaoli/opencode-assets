@@ -36,6 +36,16 @@
       "enabled": true,
       "type": "local"
     },
+    "figma": {
+      "type": "local",
+      "command": [
+        "sh",
+        "-lc",
+        "npx -y @thirdstrandstudio/mcp-figma --figma-token \"$FIGMA_TOKEN\""
+      ],
+      "timeout": 30000,
+      "enabled": true
+    },
     "github": {
       "command": [
         "npx",
@@ -61,17 +71,6 @@
         "npx -y @modelcontextprotocol/server-postgres \"$POSTGRES_URL\""
       ],
       "enabled": false,
-      "type": "local"
-    },
-    "serena": {
-      "command": [
-        "uvx",
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server"
-      ],
-      "enabled": true,
       "type": "local"
     }
   },

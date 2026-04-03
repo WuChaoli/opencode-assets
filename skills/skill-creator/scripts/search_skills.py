@@ -7,6 +7,7 @@ import os
 import sys
 import urllib.request
 import urllib.error
+import urllib.parse
 
 SKILLSMP_API = "https://skillsmp.com/api/v1/skills"
 
@@ -21,7 +22,10 @@ def search_skills(query, api_key=None, limit=10, sort_by="stars", ai_search=Fals
     else:
         url = f"{SKILLSMP_API}/search?q={urllib.parse.quote(query)}&limit={limit}&sortBy={sort_by}"
 
-    headers = {}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+    }
     if api_key:
         headers["Authorization"] = f"Bearer {api_key}"
 
@@ -47,25 +51,33 @@ def search_skills(query, api_key=None, limit=10, sort_by="stars", ai_search=Fals
 
 def format_results(data, query):
     """Format search results for display"""
-    skills = data.get("data", data.get("skills", []))
+    # Handle nested structure: data.skills or data.skills[]
+    root = data.get("data", data)
+    if isinstance(root, dict):
+        skills = root.get("skills", [])
+    elif isinstance(root, list):
+        skills = root
+    else:
+        skills = []
 
     if not skills:
         print(f"No skills found for query: {query}")
         return
 
-    print(f"Found {len(skills)} skills for '{query}':\n")
-    print(f"{'#':<4} {'Name':<30} {'Stars':<8} {'Updated':<12} {'Match':<8}")
-    print("-" * 70)
+    total = data.get("data", {}).get("pagination", {}).get("total", len(skills))
+    print(f"Found {total} skills for '{query}':\n")
+    print(f"{'#':<4} {'Name':<35} {'Author':<20} {'Stars':<8} {'Description'}")
+    print("-" * 100)
 
     for i, skill in enumerate(skills[:10], 1):
-        name = skill.get("name", skill.get("title", "Unknown"))[:28]
-        stars = skill.get("stars", skill.get("star_count", 0))
-        updated = skill.get("updated_at", skill.get("last_updated", "Unknown"))[:10]
-        match = skill.get("match_score", skill.get("relevance", "N/A"))
+        name = skill.get("name", "Unknown")[:33]
+        author = skill.get("author", "Unknown")[:18]
+        stars = skill.get("stars", 0)
+        desc = skill.get("description", "")[:40].replace("\n", " ")
 
-        print(f"{i:<4} {name:<30} {stars:<8} {updated:<12} {match:<8}")
+        print(f"{i:<4} {name:<35} {author:<20} {stars:<8} {desc}")
 
-    print(f"\nTotal: {data.get('total', len(skills))} skills found")
+    print(f"\nTotal: {total} skills found")
     print("Visit https://skillsmp.com for more details")
 
 
