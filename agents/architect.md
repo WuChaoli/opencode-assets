@@ -1,7 +1,7 @@
 ---
 description: "架构设计与文档专家：进行系统架构分析、设计决策和架构文档撰写。用于需要架构评审、系统设计、技术选型或生成架构文档时。"
 mode: subagent
-model: opencode/claude-sonnet-4-6
+model: opencode-go/deepseek-v4-pro
 temperature: 0.3
 permission:
   edit: allow
